@@ -1,0 +1,161 @@
+------------------CERINTA 12------------------
+
+---Formulați în  limbaj  natural și  implementați 5cereri  SQL  complexece  vor  utiliza,  în ansamblul lor, următoarele elemente: 
+
+
+---utilizarea a cel puțin 2 funcții pe șiruri de caractere, 2 funcții pe date calendaristice, a cel puțin unei expresii CASE
+
+select t.Nume_Erasmus, t.Tara, t.Cand_Incepe
+from (
+    select e.nume Nume_Erasmus, t.nume Tara, 
+    case sign(round(sysdate - e.data_inceput))
+        when -1  then concat(concat('Va incepe in ', 
+        abs(round(sysdate - e.data_inceput))), ' zile!')
+        else concat(concat('A inceput acum ', 
+        abs(round(sysdate - e.data_inceput))), ' zile!')
+    end 
+    Cand_Incepe, round(sysdate - e.data_inceput) zile, 
+    row_number() over (partition by e.nume, t.nume order by 1 desc) nr
+    
+    from erasmus e
+    join studii_strainatate s on e.id_erasmus = s.id_erasmus
+    join tari t on t.id_tara = s.id_tara) t
+where t.nr = 1 and 
+abs(t.zile) > 150
+order by t.zile desc;
+
+
+---ordonărisi utilizarea funcțiilor NVL și DECODE (in cadrul aceleiasi cereri)
+---subcereri nesincronizateîn clauza FROM
+
+select p.nume , p.prenume,
+    NVL2(p.id_decanat, concat('Este in decanat pana pe data ',add_months(d.data, 12*d.durata)),
+    'Nu este in decanat') as decanat,
+    decode(sign(p.vechime-15), 
+        +1, 'Experimentat', 
+        -1, 'Avansat', 
+        0, 'Experimentat') experienta
+from profesor p, decanat d
+order by p.nume asc, p.prenume asc;
+
+
+---utilizarea a cel puțin 1 bloc de cerere(clauza WITH)
+
+with tabela8 as (select c.id_profesor 
+    from curs c
+    where c.id_curs in (
+        select r.id_curs
+        from specializare s
+        join relatie_specializare_curs r on r.id_specializare = s.id_specializare
+        join curs c on c.id_curs = r.id_curs
+        where lower(s.nume_diploma) like 'licentiat%'
+    	)
+	and (lower(c.nume) like 'analiza%' or lower(c.nume) like 'logica%'))
+select p.nume, p.prenume, p.vechime 
+from profesor p
+where id_profesor in (select * from tabela8)
+order by p.vechime desc;
+
+
+---subcereri sincronizateîn care intervin cel puțin 3 tabele
+
+select s.nume, s.prenume, s.an_studiu, b.suma
+from student s
+join bursa b on b.id_student = s.id_student
+where b.suma >= (select avg(b1.suma) from bursa b1 where 
+    (b1.nume like 'Bursa Merit%' and b.nume like 'Bursa Merit%') 
+    or b1.nume like 'Bursa Per%' and b.nume like 'Bursa Per%')
+and s.id_student in (select id_student from studii_strainatate);
+
+
+---grupări de date cu  subcereri nesincronizate in care intervin cel putin 3 tabele, funcții grup, filtrare la nivel degrupuri(in cadrul aceleiasi cereri)
+
+select e.nume 
+from erasmus e
+join studii_strainatate s on e.id_erasmus = s.id_erasmus
+join student st on st.id_student = s.id_student
+where lower(st.tip_student) = 'buget' and to_char(e.data_inceput) < sysdate
+group by e.nume
+having e.nume in (select nume from erasmus);
+
+
+
+
+----------------------CERINTA 13----------------------
+
+---Implementarea a 3 operații de actualizare șide suprimare a datelor utilizând subcereri.
+
+
+update bursa b
+set suma = (select 
+    case sign(b.suma - 1154)
+        when -1 then suma*1.3
+        else 1500
+    end     
+    from bursa b2 where b2.id_bursa = b.id_bursa)
+where lower(b.nume) = 'bursa merit 1' and b.id_student in(
+    select id_student from studii_strainatate s where s.id_tara = (
+        select t.id_tara from tari t where lower(t.nume) = 'anglia'));
+  
+rollback;  
+
+commit;  
+update taxa t
+set t.valoare_taxa = t.valoare_taxa * 
+(1+2*(4-(select st.an_studiu from student st where st.id_student = t.id_student))/10)
+where (select st.nume from student st where st.id_student = t.id_student) not like 'A%';
+rollback;  
+
+rollback;
+
+delete from licenta l 
+where l.id_student is not null 
+and l.id_student in 
+    (select id_student from student st where st.grupa like '36%');
+rollback;
+
+
+----------------------CERINTA 15----------------------
+
+---Formulați în limbaj natural și implementați în SQL: o cerere ce utilizează operația outer-joinpe  minimum  4  tabele, o cerere ce utilizează operația division și  o  cerere  care implementează analiza top-n.
+
+
+---outer-join
+
+with tabela7 as(
+    select e.nume Nume_Erasmus, t.nume Tara, st.id_student
+    from erasmus e
+    join studii_strainatate s on e.id_erasmus = s.id_erasmus
+    join tari t on t.id_tara = s.id_tara
+    join student st on st.id_student = s.id_student)
+select st.id_student, st.nume, st.prenume, st.grupa, st.tip_student,
+tabela7.Nume_Erasmus, tabela7.Tara, b.nume, b.suma, 
+l.id_licenta, l.nume Nume_Licenta from student st
+    left join tabela7 on tabela7.id_student = st.id_student
+    left join bursa b on b.id_student = st.id_student
+    left join licenta l on l.id_student = st.id_student
+order by st.grupa desc, st.nume, st.prenume, st.tip_student, b.suma;
+
+
+---division
+
+select s.id_student, s.nume, s.prenume
+from student s
+where not exists(
+  select b.nume
+  from bursa b
+  where not exists (
+    select *
+    from bursa b2
+    where b2.id_student = s.id_student
+    and b2.nume = b.nume));
+
+
+---top-n
+
+select n, s, rownum 
+from(select st.nume n, b.suma s
+    from student st, bursa b
+    where st.id_student = b.id_student
+    order by s desc)
+where rownum <4;

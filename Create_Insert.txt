@@ -1,0 +1,285 @@
+create table decanat(id_decanat number Primary Key, data date, durata number);
+
+create table profesor(id_profesor number Primary Key, 
+nume varchar2(30) not null, prenume varchar2(30) not null, cnp varchar2(16), 
+id_specializare number(5), vechime number(2), id_decanat number(5));
+
+alter table profesor drop column id_specializare;
+
+create table curs(id_curs number(5) Primary Key, nume varchar2(30) not null, 
+id_specializare number(5) not null, id_profesor number(5) not null); 
+alter table curs drop column id_specializare;
+
+create table specializare(id_specializare number(5) Primary Key, 
+nume varchar2(30) not null, nume_diploma varchar2(60) not null);
+
+alter table specializare 
+add constraint nume_specializare check(nume = 'Matematica Pura' or nume = 'CTI' or nume = 'Informatica' or
+nume = 'Matematica Informatica' or nume = 'Matematica Aplicata');
+
+select * from specializare;
+
+create table licenta(id_licenta number(5) Primary Key, 
+nume varchar2(30) not null unique, id_student number(5) not null,
+id_specializare number(5) not null, id_profesor number(5) not null);
+
+alter table licenta 
+modify id_student number(5) null;
+alter table licenta 
+modify id_profesor number(5) null;
+alter table licenta 
+modify id_specializare number(5) null;
+
+select * from licenta;
+
+create table bursa(id_bursa number(5) Primary Key, nume varchar2(30) not null, 
+suma number(4) not null, id_student number(5) not null);
+
+create table taxa(id_student number(5) Primary Key, valoare_taxa number(4) not null);
+
+create table buget(id_student number(5) Primary Key, medie_admitere float(2) not null);
+alter table buget 
+modify (medie_admitere decimal(4,2));
+
+create table student(id_student number(5) Primary Key, nume varchar2(30) not null,
+prenume varchar2(30) not null, cnp varchar2(16) not null, an_studiu number(1) not null, 
+grupa number(3) not null, tip_student varchar2(20) not null);
+
+alter table student 
+add constraint grupa_3 check(grupa between 100 and 500);
+
+
+create table erasmus(id_erasmus number(5) Primary Key, nume varchar2(30) not null,
+durata number(5) not null, data_inceput date not null); 
+
+create table tari(id_tara number(5) Primary Key, nume varchar2(30) not null,
+moneda varchar2(3) not null, limba varchar2(30) not null); 
+
+create table relatie_student_curs(id_relatie_sc number(5) Primary Key, 
+id_student number(5), id_curs number(5));
+
+create table relatie_specializare_curs(id_relatie_spc number(5) Primary Key, 
+id_specializare number(5), id_curs number(5));
+
+create table studii_strainatate(id_relatie_ss number(5) Primary Key, 
+id_student number(5) not null, id_tara number(5) not null, id_erasmus number(5) not null);
+
+alter table taxa
+add foreign key(id_student) references student(id_student);
+
+alter table taxa
+add foreign key(id_student) references student(id_student) on delete cascade;
+
+alter table studii_strainatate
+add foreign key(id_student) references student(id_student);
+
+alter table studii_strainatate
+add foreign key(id_erasmus) references erasmus(id_erasmus);
+
+alter table studii_strainatate
+add foreign key(id_tara) references tari(id_tara);
+
+alter table bursa
+add foreign key(id_student) references student(id_student);
+
+alter table bursa
+add foreign key(id_student) references student(id_student);
+
+alter table relatie_student_curs
+add foreign key(id_student) references student(id_student);
+
+alter table relatie_student_curs
+add foreign key(id_curs) references curs(id_curs);
+
+alter table relatie_specializare_curs
+add foreign key(id_curs) references curs(id_curs);
+
+alter table relatie_specializare_curs
+add foreign key(id_specializare) references specializare(id_specializare);
+
+alter table licenta
+add foreign key(id_student) references student(id_student);
+
+alter table licenta
+add foreign key(id_profesor) references profesor(id_profesor);
+
+alter table licenta
+add foreign key(id_specializare) references specializare(id_specializare);
+
+alter table curs
+add foreign key(id_profesor) references profesor(id_profesor);
+
+alter table profesor
+add foreign key(id_decanat) references decanat(id_decanat);
+
+alter table taxa
+add foreign key(id_student) references student(id_student);
+
+alter table buget
+add foreign key(id_student) references student(id_student);
+
+insert into decanat values(7867, to_date('10.10.2019', 'DD.MM.YYYY'), 4);
+insert into decanat values(7865, to_date('10.10.2015', 'DD.MM.YYYY'), 4);
+insert into decanat values(7864, to_date('10.10.2011', 'DD.MM.YYYY'), 4);
+insert into decanat values(7863, to_date('10.10.2007', 'DD.MM.YYYY'), 4);
+insert into decanat values(7868, to_date('10.10.2023', 'DD.MM.YYYY'), null);
+select * from decanat;
+
+delete from decanat
+where id_decanat = 7868; 
+
+select * from profesor;
+insert into profesor values(1000, 'Dinu', 'Mihai', 111, 10, 7867);
+insert into profesor values(1001, 'Radu', 'Ghe', 112, 16, 7867);
+insert into profesor values(1002, 'Liviu', 'Bu', 113, 22, 7867);
+insert into profesor values(1003, 'Loredana', 'Delc', 114, 12, 7867);
+insert into profesor values(1004, 'Geo', 'Pris', 115, 8, 7867);
+
+insert into profesor values(1005, 'Andrei', 'Pop', 116, 9, null);
+insert into profesor values(1006, 'Alex', 'Ong', 117, 6, null);
+insert into profesor values(1007, 'Vlad', 'Dumitru', 118, 7, null);
+
+insert into curs values(id_gen.nextval, 'Analiza', 1004);
+insert into curs values(id_gen.nextval, 'Algebra', 1004);
+insert into curs values(id_gen.nextval, 'PA', 1005);
+insert into curs values(id_gen.nextval, 'SD', 1004);
+insert into curs values(id_gen.nextval, 'LFA', 1001);
+insert into curs values(id_gen.nextval, 'BD', 1007);
+insert into curs values(id_gen.nextval, 'POO', 1002);
+insert into curs values(id_gen.nextval, 'Logica', 1006);
+insert into curs values(id_gen.nextval, 'Analiza2', 1003);
+insert into curs values(id_gen.nextval, 'Algebra2', 1003);
+insert into curs values(id_gen.nextval, 'Geometrie', 1003);
+insert into curs values(id_gen.nextval, 'Mecanica Cereasca', 1003);
+insert into curs values(id_gen.nextval, 'IA', 1002);
+insert into curs values(id_gen.nextval, 'RT', 1005);
+
+select * from curs;
+
+insert into specializare values(id_gen.nextval, 'Matematica Pura', 'Licentiat in Matematica Pura');
+insert into specializare values(id_gen.nextval, 'Matematica Aplicata', 'Licentiat in Matematica Aplicata');
+insert into specializare values(id_gen.nextval, 'Matematica Informatica', 'Licentiat in Matematica Informatica');
+insert into specializare values(id_gen.nextval, 'Informatica', 'Licentiat in Informatica');
+insert into specializare values(id_gen.nextval, 'CTI', 'Inginer in CTI');
+
+select * from specializare;
+
+insert into tari values(id_gen.nextval, 'Germania', 'EUR', 'Germana');
+insert into tari values(id_gen.nextval, 'Franta', 'EUR', 'Franceza');
+insert into tari values(id_gen.nextval, 'Italia', 'EUR', 'Italiana');
+insert into tari values(id_gen.nextval, 'Anglia', 'GBP', 'Engleza');
+insert into tari values(id_gen.nextval, 'America', 'DOL', 'Engleza');
+insert into tari values(id_gen.nextval, 'Imaginar', 'EUR', 'Engleza');
+
+select * from tari;
+
+insert into erasmus values(id_gen.nextval, 'Hai la mare!', 256, to_date('11.12.2019','DD.MM.YYYY'));
+insert into erasmus values(id_gen.nextval, 'Hai la munte!', 120, to_date('01.05.2022','DD.MM.YYYY'));
+insert into erasmus values(id_gen.nextval, 'Hai la lac!', 44, to_date('11.01.2024','DD.MM.YYYY'));
+insert into erasmus values(id_gen.nextval, 'Hai la rau!', 16, to_date('17.04.2025','DD.MM.YYYY'));
+insert into erasmus values(id_gen.nextval, 'Hai la poiana!', 220, to_date('24.12.2022','DD.MM.YYYY'));
+insert into erasmus values(id_gen.nextval, 'Hai la vanatoare!', 15, to_date('19.05.2023','DD.MM.YYYY'));
+insert into erasmus values(id_gen.nextval, 'Hai la plaja!', 14, to_date('22.08.2024','DD.MM.YYYY'));
+
+select * from erasmus;
+
+insert into relatie_specializare_curs values(id_gen.nextval, 1039, 1025);
+insert into relatie_specializare_curs values(id_gen.nextval, 1039, 1026);
+insert into relatie_specializare_curs values(id_gen.nextval, 1039, 1032);
+insert into relatie_specializare_curs values(id_gen.nextval, 1039, 1033);
+insert into relatie_specializare_curs values(id_gen.nextval, 1039, 1034);
+insert into relatie_specializare_curs values(id_gen.nextval, 1039, 1036);
+insert into relatie_specializare_curs values(id_gen.nextval, 1040, 1025);
+insert into relatie_specializare_curs values(id_gen.nextval, 1040, 1026);
+insert into relatie_specializare_curs values(id_gen.nextval, 1040, 1032);
+insert into relatie_specializare_curs values(id_gen.nextval, 1040, 1035);
+insert into relatie_specializare_curs values(id_gen.nextval, 1040, 1038);
+insert into relatie_specializare_curs values(id_gen.nextval, 1041, 1025);
+insert into relatie_specializare_curs values(id_gen.nextval, 1041, 1026);
+insert into relatie_specializare_curs values(id_gen.nextval, 1041, 1032);
+insert into relatie_specializare_curs values(id_gen.nextval, 1041, 1033);
+insert into relatie_specializare_curs values(id_gen.nextval, 1041, 1031);
+insert into relatie_specializare_curs values(id_gen.nextval, 1041, 1037);
+insert into relatie_specializare_curs values(id_gen.nextval, 1042, 1027);
+insert into relatie_specializare_curs values(id_gen.nextval, 1042, 1028);
+insert into relatie_specializare_curs values(id_gen.nextval, 1042, 1029);
+insert into relatie_specializare_curs values(id_gen.nextval, 1042, 1030);
+insert into relatie_specializare_curs values(id_gen.nextval, 1042, 1031);
+insert into relatie_specializare_curs values(id_gen.nextval, 1043, 1038);
+insert into relatie_specializare_curs values(id_gen.nextval, 1043, 1037);
+insert into relatie_specializare_curs values(id_gen.nextval, 1043, 1036);
+
+select * from relatie_specializare_curs;
+
+insert into student values(id_gen.nextval, 'Ch', 'Tud', cnp_gen.nextval, 1, 131, 'buget');
+insert into student values(id_gen.nextval, 'Ing', 'AL', cnp_gen.nextval, 2, 242, 'buget');
+insert into student values(id_gen.nextval, 'Pop', 'Andi', cnp_gen.nextval, 3, 351, 'taxa');
+insert into student values(id_gen.nextval, 'Mih', 'Vlad', cnp_gen.nextval, 1, 101, 'buget');
+insert into student values(id_gen.nextval, 'Ali', 'Mah', cnp_gen.nextval, 2, 262, 'taxa');
+insert into student values(id_gen.nextval, 'Jon', 'Stef', cnp_gen.nextval, 3, 303, 'taxa');
+insert into student values(id_gen.nextval, 'Alexandra', 'Andreea', cnp_gen.nextval, 2, 204, 'buget');
+insert into student values(id_gen.nextval, 'Dumitriu', 'Ion', cnp_gen.nextval, 1, 102, 'taxa');
+insert into student values(id_gen.nextval, 'Laur', 'Proti', cnp_gen.nextval, 3, 362, 'buget');
+insert into student values(id_gen.nextval, 'Dana', 'Medeea', cnp_gen.nextval, 2, 261, 'taxa');
+
+select * from student;
+
+insert into buget values(1083, 9.84);
+delete from buget where medie_admitere = 9;
+insert into buget values(1084, 9.91);
+insert into buget values(1086, 9.85);
+insert into buget values(1089, 9.83);
+insert into buget values(1091, 9.78);
+
+select * from buget;
+
+insert into taxa values(1085, 3030);
+insert into taxa values(1087, 3230);
+insert into taxa values(1088, 3660);
+insert into taxa values(1090, 4520);
+insert into taxa values(1092, 3900);
+
+select * from taxa;
+
+insert into studii_strainatate values(id_gen.nextval, 1083, 1047, 1050);
+insert into studii_strainatate values(id_gen.nextval, 1083, 1044, 1055);
+insert into studii_strainatate values(id_gen.nextval, 1084, 1049, 1052);
+insert into studii_strainatate values(id_gen.nextval, 1085, 1048, 1053);
+insert into studii_strainatate values(id_gen.nextval, 1086, 1047, 1055);
+insert into studii_strainatate values(id_gen.nextval, 1086, 1045, 1051);
+insert into studii_strainatate values(id_gen.nextval, 1087, 1046, 1054);
+insert into studii_strainatate values(id_gen.nextval, 1084, 1047, 1056);
+insert into studii_strainatate values(id_gen.nextval, 1092, 1049, 1052);
+insert into studii_strainatate values(id_gen.nextval, 1090, 1044, 1053);
+insert into studii_strainatate values(id_gen.nextval, 1090, 1047, 1056);
+
+select * from studii_strainatate;
+
+create table licenta(id_licenta number(5) Primary Key, 
+nume varchar2(30) not null unique, id_student number(5) not null,
+id_specializare number(5) not null, id_profesor number(5) not null);
+
+insert into licenta values(id_gen.nextval, 'Studii in Analiza', 1085, 1039, 1004); 
+insert into licenta values(id_gen.nextval, 'Studii in POO', 1088, 1042, 1002); 
+insert into licenta values(id_gen.nextval, 'Studii in CTI', 1091, 1043, 1007); 
+insert into licenta values(id_gen.nextval, 'Studii in IA', null, null, null);
+insert into licenta values(id_gen.nextval, 'Studii in ML', null, null, null);
+
+select * from licenta;
+
+insert into bursa values(id_gen.nextval, 'Bursa Merit 1', 800, 1083);
+insert into bursa values(id_gen.nextval, 'Bursa Merit 2', 900, 1084);
+insert into bursa values(id_gen.nextval, 'Bursa Performanta', 1200, 1091);
+insert into bursa values(id_gen.nextval, 'Bursa Merit 1', 800, 1086);
+insert into bursa values(id_gen.nextval, 'Bursa Merit 2', 900, 1089);
+
+alter table bursa 
+add constraint suma_minima check(suma >= 500) ;
+
+alter table bursa 
+add constraint suma_maxima check(suma <=1500);
+
+insert into relatie_student_curs values(id_gen.nextval, 1092, id_fill5.nextval);
+
+insert into bursa values (1115, 'Bursa Merit 2', 900, 1083);
+insert into bursa values (1116, 'Bursa Performanta', 1200, 1083);
