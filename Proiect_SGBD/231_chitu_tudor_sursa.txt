@@ -1,0 +1,1446 @@
+Table STUDENT
+
+  CREATE TABLE "TEDI"."STUDENT" 
+   (	"ID_STUDENT" NUMBER(5,0), 
+	"NUME" VARCHAR2(30 BYTE), 
+	"PRENUME" VARCHAR2(30 BYTE), 
+	"CNP" VARCHAR2(16 BYTE), 
+	"AN_STUDIU" NUMBER(1,0), 
+	"GRUPA" NUMBER(3,0), 
+	"TIP_STUDENT" VARCHAR2(20 BYTE)
+   ) 
+  ALTER TABLE "TEDI"."STUDENT" MODIFY ("NUME" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."STUDENT" MODIFY ("PRENUME" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."STUDENT" MODIFY ("CNP" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."STUDENT" MODIFY ("AN_STUDIU" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."STUDENT" MODIFY ("GRUPA" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."STUDENT" MODIFY ("TIP_STUDENT" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."STUDENT" ADD PRIMARY KEY ("ID_STUDENT")
+  ALTER TABLE "TEDI"."STUDENT" ADD CONSTRAINT "GRUPA_3" CHECK (grupa between 100 and 500) ENABLE;
+
+Table TAXA
+
+  CREATE TABLE "TEDI"."TAXA" 
+   (	"ID_STUDENT" NUMBER(5,0), 
+	"VALOARE_TAXA" NUMBER(4,0)
+   ) 
+
+  ALTER TABLE "TEDI"."TAXA" MODIFY ("VALOARE_TAXA" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."TAXA" ADD PRIMARY KEY ("ID_STUDENT")
+  ALTER TABLE "TEDI"."TAXA" ADD FOREIGN KEY ("ID_STUDENT")
+	  REFERENCES "TEDI"."STUDENT" ("ID_STUDENT") ENABLE;
+
+Table BUGET
+
+  CREATE TABLE "TEDI"."BUGET" 
+   (	"ID_STUDENT" NUMBER(5,0), 
+	"MEDIE_ADMITERE" NUMBER(4,2)
+   ) 
+  ALTER TABLE "TEDI"."BUGET" MODIFY ("MEDIE_ADMITERE" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."BUGET" ADD PRIMARY KEY ("ID_STUDENT")
+  ALTER TABLE "TEDI"."BUGET" ADD FOREIGN KEY ("ID_STUDENT")
+	  REFERENCES "TEDI"."STUDENT" ("ID_STUDENT") ENABLE;
+
+
+Table ERASMUS
+
+
+  CREATE TABLE "TEDI"."ERASMUS" 
+   (	"ID_ERASMUS" NUMBER(5,0), 
+	"NUME" VARCHAR2(30 BYTE), 
+	"DURATA" NUMBER(5,0), 
+	"DATA_INCEPUT" DATE
+   )
+  ALTER TABLE "TEDI"."ERASMUS" MODIFY ("NUME" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."ERASMUS" MODIFY ("DURATA" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."ERASMUS" MODIFY ("DATA_INCEPUT" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."ERASMUS" ADD PRIMARY KEY ("ID_ERASMUS")
+
+
+Table TARI
+
+
+  CREATE TABLE "TEDI"."TARI" 
+   (	"ID_TARA" NUMBER(5,0), 
+	"NUME" VARCHAR2(30 BYTE), 
+	"MONEDA" VARCHAR2(3 BYTE), 
+	"LIMBA" VARCHAR2(30 BYTE)
+   ) 
+
+  ALTER TABLE "TEDI"."TARI" MODIFY ("NUME" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."TARI" MODIFY ("MONEDA" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."TARI" MODIFY ("LIMBA" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."TARI" ADD PRIMARY KEY ("ID_TARA")
+  
+
+Table STUDII_STRAINATATE
+
+
+  CREATE TABLE "TEDI"."STUDII_STRAINATATE" 
+   (	"ID_RELATIE_SS" NUMBER(5,0), 
+	"ID_STUDENT" NUMBER(5,0), 
+	"ID_TARA" NUMBER(5,0), 
+	"ID_ERASMUS" NUMBER(5,0)
+   ) 
+  ALTER TABLE "TEDI"."STUDII_STRAINATATE" MODIFY ("ID_STUDENT" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."STUDII_STRAINATATE" MODIFY ("ID_TARA" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."STUDII_STRAINATATE" MODIFY ("ID_ERASMUS" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."STUDII_STRAINATATE" ADD PRIMARY KEY ("ID_RELATIE_SS")
+  ALTER TABLE "TEDI"."STUDII_STRAINATATE" ADD FOREIGN KEY ("ID_STUDENT")
+	  REFERENCES "TEDI"."STUDENT" ("ID_STUDENT") ENABLE;
+  ALTER TABLE "TEDI"."STUDII_STRAINATATE" ADD FOREIGN KEY ("ID_ERASMUS")
+	  REFERENCES "TEDI"."ERASMUS" ("ID_ERASMUS") ENABLE;
+  ALTER TABLE "TEDI"."STUDII_STRAINATATE" ADD FOREIGN KEY ("ID_TARA")
+	  REFERENCES "TEDI"."TARI" ("ID_TARA") ENABLE;
+
+
+Table CAZ_SOCIAL
+
+  CREATE TABLE "TEDI"."CAZ_SOCIAL" 
+   (	"ID_CAZ_SOCIAL" NUMBER(5,0), 
+	"NR_ADEVERINTE" NUMBER(5,0), 
+	"VENIT_LUNAR" NUMBER(5,0), 
+	"ID_BURSA" NUMBER(5,0)
+   ) 
+  ALTER TABLE "TEDI"."CAZ_SOCIAL" ADD PRIMARY KEY ("ID_CAZ_SOCIAL")
+  ALTER TABLE "TEDI"."CAZ_SOCIAL" ADD FOREIGN KEY ("ID_BURSA")
+	  REFERENCES "TEDI"."BURSA" ("ID_BURSA") ENABLE;
+Table BURSA
+
+
+  CREATE TABLE "TEDI"."BURSA" 
+   (	"ID_BURSA" NUMBER(5,0), 
+	"NUME" VARCHAR2(30 BYTE), 
+	"SUMA" NUMBER(4,0), 
+	"ID_STUDENT" NUMBER(5,0)
+   ) 
+  ALTER TABLE "TEDI"."BURSA" ADD CONSTRAINT "SUMA_MINIMA" CHECK (suma >= 500) ENABLE;
+  ALTER TABLE "TEDI"."BURSA" ADD CONSTRAINT "SUMA_MAXIMA" CHECK (suma <=1500) ENABLE;
+  ALTER TABLE "TEDI"."BURSA" MODIFY ("NUME" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."BURSA" MODIFY ("SUMA" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."BURSA" MODIFY ("ID_STUDENT" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."BURSA" ADD PRIMARY KEY ("ID_BURSA")
+  ALTER TABLE "TEDI"."BURSA" ADD FOREIGN KEY ("ID_STUDENT")
+	  REFERENCES "TEDI"."STUDENT" ("ID_STUDENT") ENABLE;
+Table LICENTA
+
+
+  CREATE TABLE "TEDI"."LICENTA" 
+   (	"ID_LICENTA" NUMBER(5,0), 
+	"NUME" VARCHAR2(30 BYTE), 
+	"ID_STUDENT" NUMBER(5,0), 
+	"ID_SPECIALIZARE" NUMBER(5,0), 
+	"ID_PROFESOR" NUMBER(5,0)
+   ) 
+  ALTER TABLE "TEDI"."LICENTA" MODIFY ("NUME" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."LICENTA" ADD PRIMARY KEY ("ID_LICENTA")
+  ALTER TABLE "TEDI"."LICENTA" ADD UNIQUE ("NUME")
+  ALTER TABLE "TEDI"."LICENTA" ADD FOREIGN KEY ("ID_STUDENT")
+	  REFERENCES "TEDI"."STUDENT" ("ID_STUDENT") ENABLE;
+  ALTER TABLE "TEDI"."LICENTA" ADD FOREIGN KEY ("ID_PROFESOR")
+	  REFERENCES "TEDI"."PROFESOR" ("ID_PROFESOR") ENABLE;
+  ALTER TABLE "TEDI"."LICENTA" ADD FOREIGN KEY ("ID_SPECIALIZARE")
+	  REFERENCES "TEDI"."SPECIALIZARE" ("ID_SPECIALIZARE") ENABLE;
+
+
+Table SPECIALIZARE
+
+
+  CREATE TABLE "TEDI"."SPECIALIZARE" 
+   (	"ID_SPECIALIZARE" NUMBER(5,0), 
+	"NUME" VARCHAR2(30 BYTE), 
+	"NUME_DIPLOMA" VARCHAR2(60 BYTE)
+   ) 
+  ALTER TABLE "TEDI"."SPECIALIZARE" MODIFY ("NUME" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."SPECIALIZARE" MODIFY ("NUME_DIPLOMA" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."SPECIALIZARE" ADD PRIMARY KEY ("ID_SPECIALIZARE")
+  ALTER TABLE "TEDI"."SPECIALIZARE" ADD CONSTRAINT "NUME_SPECIALIZARE" CHECK (nume = 'Matematica Pura' or nume = 'CTI' or nume = 'Informatica' or
+nume = 'Matematica Informatica' or nume = 'Matematica Aplicata') ENABLE;
+
+
+Table PROFESOR
+
+
+  CREATE TABLE "TEDI"."PROFESOR" 
+   (	"ID_PROFESOR" NUMBER, 
+	"NUME" VARCHAR2(30 BYTE), 
+	"PRENUME" VARCHAR2(30 BYTE), 
+	"CNP" VARCHAR2(16 BYTE), 
+	"VECHIME" NUMBER(2,0), 
+	"ID_DECANAT" NUMBER(5,0)
+   ) 
+  ALTER TABLE "TEDI"."PROFESOR" MODIFY ("NUME" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."PROFESOR" MODIFY ("PRENUME" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."PROFESOR" ADD PRIMARY KEY ("ID_PROFESOR")
+  ALTER TABLE "TEDI"."PROFESOR" ADD FOREIGN KEY ("ID_DECANAT")
+	  REFERENCES "TEDI"."DECANAT" ("ID_DECANAT") ENABLE;
+
+
+
+Table CURS
+
+
+  CREATE TABLE "TEDI"."CURS" 
+   (	"ID_CURS" NUMBER(5,0), 
+	"NUME" VARCHAR2(30 BYTE), 
+	"ID_PROFESOR" NUMBER(5,0)
+   ) 
+  ALTER TABLE "TEDI"."CURS" MODIFY ("NUME" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."CURS" MODIFY ("ID_PROFESOR" NOT NULL ENABLE);
+  ALTER TABLE "TEDI"."CURS" ADD PRIMARY KEY ("ID_CURS")
+  ALTER TABLE "TEDI"."CURS" ADD FOREIGN KEY ("ID_PROFESOR")
+	  REFERENCES "TEDI"."PROFESOR" ("ID_PROFESOR") ENABLE;
+
+
+Table DECANAT
+
+
+  CREATE TABLE "TEDI"."DECANAT" 
+   (	"ID_DECANAT" NUMBER, 
+	"DATA" DATE, 
+	"DURATA" NUMBER
+   ) 
+  ALTER TABLE "TEDI"."DECANAT" ADD PRIMARY KEY ("ID_DECANAT")
+  
+
+
+
+Table RELATIE_SPECIALIZARE_CURS
+
+
+  CREATE TABLE "TEDI"."RELATIE_SPECIALIZARE_CURS" 
+   (	"ID_RELATIE_SPC" NUMBER(5,0), 
+	"ID_SPECIALIZARE" NUMBER(5,0), 
+	"ID_CURS" NUMBER(5,0)
+   ) 
+  ALTER TABLE "TEDI"."RELATIE_SPECIALIZARE_CURS" ADD PRIMARY KEY ("ID_RELATIE_SPC")
+  ALTER TABLE "TEDI"."RELATIE_SPECIALIZARE_CURS" ADD FOREIGN KEY ("ID_CURS")
+	  REFERENCES "TEDI"."CURS" ("ID_CURS") ENABLE;
+  ALTER TABLE "TEDI"."RELATIE_SPECIALIZARE_CURS" ADD FOREIGN KEY ("ID_SPECIALIZARE")
+	  REFERENCES "TEDI"."SPECIALIZARE" ("ID_SPECIALIZARE") ENABLE;
+
+
+Table RELATIE_STUDENT_CURS
+
+
+  CREATE TABLE "TEDI"."RELATIE_STUDENT_CURS" 
+   (	"ID_RELATIE_SC" NUMBER(5,0), 
+	"ID_STUDENT" NUMBER(5,0), 
+	"ID_CURS" NUMBER(5,0)
+   ) 
+  ALTER TABLE "TEDI"."RELATIE_STUDENT_CURS" ADD PRIMARY KEY ("ID_RELATIE_SC")
+  ALTER TABLE "TEDI"."RELATIE_STUDENT_CURS" ADD FOREIGN KEY ("ID_STUDENT")
+	  REFERENCES "TEDI"."STUDENT" ("ID_STUDENT") ENABLE;
+  ALTER TABLE "TEDI"."RELATIE_STUDENT_CURS" ADD FOREIGN KEY ("ID_CURS")
+	  REFERENCES "TEDI"."CURS" ("ID_CURS") ENABLE;
+
+
+
+
+
+CREATE OR REPLACE PROCEDURE findMostNActiveStudent
+ (v_nrcomp NUMBER DEFAULT 1)
+IS
+         /*Record*/
+         type student_info is record (
+         id_student STUDENT.id_student%TYPE,
+         nume_student STUDENT.nume%TYPE,
+         id_bursa BURSA.id_bursa%TYPE
+         );
+         /*Tablou imbricat*/
+         type tablou_imbricat is table of student_info;
+         v_list_students tablou_imbricat := tablou_imbricat();
+         v_old_student STUDENT.id_student%TYPE;
+         v_nume STUDENT.nume%TYPE;
+         /*Tablou indexat*/
+         type tablou_indexat is table of bursa.id_bursa%TYPE index by pls_integer;
+         v_list_burse tablou_indexat;
+         v_allburse number;
+         /*Vector*/
+         type vector is varray(150) of STUDENT.id_student%TYPE;
+         v_list_studentids vector := vector();
+         i number;
+         j number;
+         minim number;
+         contor number;
+         too_many_burse exception;
+         too_many_burse_cautate exception;
+     BEGIN
+         select count(*)
+         into v_allburse
+         from bursa;
+         
+         if(v_nrcomp > v_allburse) then
+            raise too_many_burse;
+         end if;
+         
+         select BAUX.ID_BURSA
+         bulk collect into v_list_burse
+         from BURSA BAUX
+         join (select B.id_bursa, count(*) as nr_burse_sociale
+             from BURSA B
+             join caz_social C2 on C2.id_bursa = B.id_bursa
+             where lower(C2.nr_adeverinte) > 2
+             GROUP BY B.id_bursa) D on D.id_bursa = BAUX.id_bursa
+         order by D.nr_burse_sociale desc, BAUX.suma;
+        
+         if(v_nrcomp > v_list_burse.COUNT) then
+            raise too_many_burse_cautate;
+         end if;
+         
+         select s2.id_student, s2.nume, b.id_bursa
+        
+         bulk collect into v_list_students
+         from bursa b
+         join student s2 on s2.id_student = b.id_student
+         order by s2.id_student;
+         
+         v_old_student := v_list_students(1).id_student;
+         contor := 0;
+         minim := v_list_students.count;
+         for i in v_list_students.first..v_list_students.last loop
+             if(v_old_student <> v_list_students(i).id_student) then
+                 if(minim = contor and contor <> 0) then
+                     v_list_studentids.extend;
+                     v_list_studentids(v_list_studentids.last) := v_old_student;
+                 elsif(minim > contor and contor <> 0) then
+                     v_list_studentids.delete;
+                     v_list_studentids.extend;
+                     v_list_studentids(v_list_studentids.last) := v_old_student;
+                     minim := contor;
+                 end if;
+                 v_old_student := v_list_students(i).id_student;
+                 contor:= 0;
+             end if;
+             for j in 1..v_nrcomp loop
+                 if(v_list_students(i).id_bursa = v_list_burse(j)) then
+                    contor := contor + 1;
+                 end if;
+             end loop;
+         end loop;
+         if(minim = contor and contor <> 0) then
+             v_list_studentids.extend;
+             v_list_studentids(v_list_studentids.last) := v_old_student;
+         elsif(minim > contor and contor <> 0) then
+             v_list_studentids.delete;
+             v_list_studentids.extend;
+             v_list_studentids(v_list_studentids.last) := v_old_student;
+             minim := contor;
+         end if;
+         
+         for i in v_list_studentids.first..v_list_studentids.last loop
+             select nume
+             into v_nume
+             from student
+             where id_student = v_list_studentids(i);
+             if(v_nume is not null) then
+                 DBMS_OUTPUT.PUT_LINE('Student ' || v_nrcomp || '-activ: id = ' || v_list_studentids(i) || ' nume = '
+                || v_nume);
+             else
+                 DBMS_OUTPUT.PUT_LINE('Student ' || v_nrcomp || '-activ: id = ' || v_list_studentids(i) || ' fara
+                nume');
+             end if;
+         end loop;
+         
+     EXCEPTION
+         when too_many_burse then
+            RAISE_APPLICATION_ERROR(-20001,'Prea putine burse cerute');
+         when too_many_burse_cautate then
+            RAISE_APPLICATION_ERROR(-20002,'Prea multe acte cerute');
+         when TOO_MANY_ROWS then
+            RAISE_APPLICATION_ERROR(-20003,'Prea multe burse gasite cu acelasi id');
+        
+         WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20004,'Nu s-au gasit datele');
+         WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR(-20000,'Alta eroare!');
+            
+END findMostNActiveStudent;
+/
+begin
+ findMostNActiveStudent(2);
+end;
+/
+
+
+
+CREATE OR REPLACE PROCEDURE proc1
+    (v_in NUMBER DEFAULT 0)
+IS
+            contor number;
+            flag number := 0;
+            cursor c is
+                select s.id_student, count(*) nr_burse
+                from STUDENT s
+                join bursa B2 on s.id_student = B2.id_student
+                group by s.id_student
+                having count(*) <= v_in;
+                
+            cursor u(v_idstudent STUDENT.id_student%type) is
+                select *
+                from bursa
+                where id_student = v_idstudent and id_student in (
+                    select id_student
+                    from studii_strainatate
+                    join ERASMUS E3 on E3.id_erasmus = studii_strainatate.id_erasmus
+                    where E3.durata >= 100
+                    )
+                for update of suma nowait ;
+                no_students exception;
+                
+    BEGIN
+        for student in c loop
+            flag := 1;
+            contor := 0;
+            for j in u(student.id_student) loop
+                if(lower(j.nume) like 'bursa merit%') then
+                    contor := contor + 1;
+                    
+                    update BURSA
+                    set suma = suma*1.2
+                    where current of u;
+                end if;
+            end loop;
+            
+            DBMS_OUTPUT.PUT('Studentul '|| student.id_student);
+            if(contor = 0) then
+                DBMS_OUTPUT.PUT_LINE(' nu si-a marit burse de merit');
+            else
+                DBMS_OUTPUT.PUT_LINE(' si-a marit '|| contor || ' burse');
+            end if;
+            
+            rollback; -------------------------------
+            
+        end loop;
+        if(flag = 0) then
+            raise no_students;
+        end if;
+        
+    EXCEPTION
+        when INVALID_CURSOR then
+            RAISE_APPLICATION_ERROR(-20001, 'Cursorul este inchis');
+        when CURSOR_ALREADY_OPEN then
+            RAISE_APPLICATION_ERROR(-20002, 'Cursor deja deschis');
+        WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20003,'Nu s-au gasit date');
+        WHEN no_students THEN
+            RAISE_APPLICATION_ERROR(-20004,'Nu sunt studenti cu acest nr minim de burse');
+        WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR(-20000,'Alta eroare!');
+            
+END proc1;
+/
+
+DECLARE
+    v_x number := &p;
+    
+BEGIN
+    proc1(v_x);
+END;
+/
+
+
+
+
+CREATE OR REPLACE FUNCTION erasmus_acreditat
+    (vin_cnp IN NUMBER,
+    vin_limba IN VARCHAR2)
+RETURN NUMBER
+IS
+        nr_err number;
+        ans number;
+        aux number;
+        my_no_data_found exception;
+        no_students_to_change exception;
+        vals_modif number := 0;
+        type tablou is table of student.id_student%TYPE;
+        v_list_students tablou := tablou();
+        
+    begin
+    
+        select count(*)
+        into aux
+        from STUDENT s
+        where s.cnp = vin_cnp;
+        if aux = 0 then
+            nr_err := 1;
+            raise my_no_data_found;
+        end if;
+        
+        select count(*)
+        into aux
+        from tari t
+        where lower(t.limba) = lower(vin_limba);
+        if aux = 0 then
+            nr_err := 2;
+            raise my_no_data_found;
+        end if;
+        ----select * from erasmus;
+        select count(*)
+        into aux
+        from ERASMUS e
+        join studii_strainatate s2 on e.id_erasmus = s2.id_erasmus
+        join tari t2 on t2.id_tara = s2.id_tara
+        where lower(t2.limba) = lower(vin_limba) and
+                e.data_inceput < sysdate;
+        if aux = 0 then
+            nr_err := 3;
+            raise my_no_data_found;
+        end if;
+        
+        select distinct st.id_student
+        bulk collect into v_list_students
+        from studii_strainatate
+        join STUDENT st on st.id_student = studii_strainatate.id_student
+        join tari t3 on t3.id_tara = studii_strainatate.id_tara
+        join erasmus e2 on studii_strainatate.id_erasmus = e2.id_erasmus
+        where st.cnp = vin_cnp and
+                lower(t3.limba) = lower(vin_limba) and
+                e2.data_inceput < sysdate;   
+        for i in v_list_students.first..v_list_students.last loop
+            DBMS_OUTPUT.PUT_LINE(v_list_students(i));
+            update student s
+            set s.tip_student = 'Erasmus Acreditat'
+            where (s.an_studiu < 3) and s.id_student = v_list_students(i);
+                vals_modif := vals_modif + SQL%ROWCOUNT;
+        end loop;
+        
+        if vals_modif = 0 then
+            raise no_students_to_change;
+        end if;
+        
+    return vals_modif;
+    
+    exception
+        WHEN my_no_data_found THEN
+            if nr_err = 1 then
+                DBMS_OUTPUT.PUT_LINE('Nu s-a gasit niciun student cu cnp-ul ' || vin_cnp);
+            elsif nr_err = 2 then
+                DBMS_OUTPUT.PUT_LINE('Nu s-a gasit niciun erasmus cu limba ' || vin_limba);
+            elsif nr_err = 3 then
+                DBMS_OUTPUT.PUT_LINE('Nu s-a gasit niciun erasmus cu limba ' || vin_limba || 'care sa fie inceput');
+            end if;
+            RETURN -20001;
+        WHEN no_students_to_change THEN
+            DBMS_OUTPUT.PUT_LINE('Niciun student nu e in erasmus acreditat');
+            RETURN -20002;
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Alta eroare');
+            DBMS_OUTPUT.PUT_LINE ('Codul erorii: ' || SQLCODE);
+            DBMS_OUTPUT.PUT_LINE ('Mesajul erorii: ' || SQLERRM);
+            RETURN -20000;
+end erasmus_acreditat;
+/
+
+begin
+    commit;
+    DBMS_OUTPUT.PUT_LINE('Result ' || erasmus_acreditat(1234567891123456, 'Engleza'));
+    DBMS_OUTPUT.PUT_LINE('Result ' || erasmus_acreditat(2234567891123485, 'Chineza'));
+
+    rollback;
+end;
+/
+
+
+
+CREATE OR REPLACE PROCEDURE studenti
+    (vin_n in number, ----bursa minima
+    vin_data in number,----data minima pt erasmus
+    vin_moneda in VARCHAR2, ----moneda tarii
+    vin_nume in VARCHAR2) ---numele erasmusului
+IS
+---select * from erasmus;
+---select * from caz_social;
+        nr_err number;
+        ind number := 0;
+        id_std buget.id_student%TYPE;
+        type tablou is table of buget.id_student%TYPE;
+        v_list_students tablou := tablou();
+        type date_student is record(
+            id_stud2 student.id_student%TYPE,
+            nume_student student.nume%TYPE,
+            prenume_student student.prenume%TYPE
+        );
+        type tablou21 is table of date_student;
+        v_list_students_fin tablou21 := tablou21();
+        type tablou2 is table of date_student INDEX BY PLS_INTEGER;
+        v_list_students_aux tablou2;
+        type tablou3 is table of erasmus.data_inceput%TYPE INDEX BY PLS_INTEGER;
+        v_aux_erasmus_data tablou3;
+        type tablou4 is table of erasmus.nume%TYPE INDEX BY PLS_INTEGER;
+        v_aux_nume_erasmus tablou4;
+        
+
+        negative exception;
+        my_no_data_found exception;
+        no_students_incase exception;
+        no_erasmus_data exception;
+        too_many_erasmus exception;
+        
+    BEGIN
+        if vin_data < 0 then
+            raise negative;
+        end if;
+        
+
+        select data_inceput
+        bulk collect into v_aux_erasmus_data
+        from erasmus
+        where data_inceput >= (sysdate - vin_data);
+                
+        if sql%notfound then
+            nr_err := 1;
+            raise my_no_data_found;
+        end if;
+        
+        select nume
+        bulk collect into v_aux_nume_erasmus
+        from erasmus
+        where nume = vin_nume;
+        if sql%rowcount > 1 then
+            raise too_many_erasmus;
+        elsif sql%notfound then
+            nr_err := 3;
+            raise my_no_data_found;
+        end if;
+        
+        
+        select bg.id_student
+        bulk collect into v_list_students
+        from buget bg
+        join (
+            select b.id_student, MAX(suma) suma_max
+            from bursa b
+            group by b.id_student
+        ) aux on bg.id_student = aux.id_student
+        where  aux.suma_max >= vin_n;
+        
+        if v_list_students.count = 0 then
+            nr_err := 2;
+            raise my_no_data_found;
+        end if;
+        
+        for i in v_list_students.first..v_list_students.last loop
+            id_std := v_list_students(i);
+            
+            select
+                st.id_student,
+                st.nume,
+                st.prenume
+            bulk collect into v_list_students_aux
+            from student st
+            where st.id_student = id_std and st.id_student in(
+                select distinct
+                    R.id_student
+                from studii_strainatate R
+                join erasmus E2 on R.id_erasmus = E2.id_erasmus
+                join tari t1 on R.id_tara = t1.id_tara
+                join buget bg on bg.id_student = R.id_student
+                where E2.data_inceput >= (sysdate - vin_data) and
+                    lower(t1.moneda) = lower(vin_moneda) and
+                    lower(E2.nume) = lower(vin_nume) and
+                    bg.medie_admitere > 9.5
+                );
+            if SQL%ROWCOUNT = 1 then
+                v_list_students_fin.extend();
+                v_list_students_fin(v_list_students_fin.last) := v_list_students_aux(v_list_students_aux.first);
+            end if;
+        end loop;
+        
+        if v_list_students_fin.count = 0 then
+            raise no_students_incase;
+        end if;
+        
+        for i in v_list_students_fin.first..v_list_students_fin.last loop
+            ind := ind + 1;
+            DBMS_OUTPUT.PUT_LINE('Student ' || ind || ') id: ' || v_list_students_fin(i).id_stud2 || 'nume: '
+            || v_list_students_fin(i).nume_student || ' ' || v_list_students_fin(i).prenume_student);
+        end loop;
+        
+    EXCEPTION
+        WHEN my_no_data_found THEN
+            if nr_err = 1 then
+                DBMS_OUTPUT.PUT_LINE('Nu exista erasmus dupa data ' || vin_data);
+            elsif nr_err = 2 then
+                DBMS_OUTPUT.PUT_LINE('Nu sunt studenti la buget care au o bursa mai mare de ' || vin_n);
+            elsif nr_err = 3 then
+                DBMS_OUTPUT.PUT_LINE('Nu exista erasmus cu numele ' || vin_nume);
+            end if;
+        RAISE_APPLICATION_ERROR(-20001, 'Nu s-au gasit date');
+        WHEN no_students_incase THEN
+            DBMS_OUTPUT.PUT_LINE('Nu exista niciun student la buget care sa respecte toate conditiile');
+            RAISE_APPLICATION_ERROR(-20002, 'Nu exista niciun student la buget care sa respecte toate
+            conditiile');
+        WHEN too_many_erasmus THEN
+            DBMS_OUTPUT.PUT_LINE('Exista mai multe erasmus cu acest nume');
+            RAISE_APPLICATION_ERROR(-20003, 'Exista mai multe erasmus cu acest nume');
+        WHEN negative THEN
+            DBMS_OUTPUT.PUT_LINE('Numarul de ani trebuie sa fie pozitiv');
+            RAISE_APPLICATION_ERROR(-20004, 'Numarul de ani trebuie sa fie pozitiv');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Alta eroare');
+            DBMS_OUTPUT.PUT_LINE ('Codul erorii: ' || SQLCODE);
+            DBMS_OUTPUT.PUT_LINE ('Mesajul erorii: ' || SQLERRM);
+            RAISE_APPLICATION_ERROR(-20000, 'Alta eroare!');
+END studenti;
+/
+begin
+    studenti(800, 2, 'EUR', 'Hai la lac!');
+    --studenti(800000, 1, 'EUR', 'Hai la lac!');
+    --studenti(800000, 1, 'EUR', 'Hai la nicaieri!');
+    --studenti(800000, -1, 'EUR', 'Hai la lac!');
+    /*Actualizam datele pentru a vedea mai multe afisari*/
+    /*update tari
+    set moneda = 'AUR'
+    where id_tara = 1047;
+    commit;
+    
+    studenti(800, 2, 'GBP', 'Hai la lac!');
+    
+    update tari
+    set moneda = 'EUR'
+    where id_tara = 1047;
+    commit;*/
+end;
+/
+
+
+create or replace trigger stergeburse
+    for delete or update
+    on student
+    referencing old as val_veche
+    compound trigger
+    
+    n number := 0;
+    m number := 0;
+    
+    TYPE tip_burse IS RECORD (
+        id_bursa bursa.id_bursa%TYPE,
+        id_student bursa.id_student%TYPE,
+        nume bursa.nume%TYPE
+    );
+    
+    TYPE vect_p IS TABLE OF tip_burse INDEX BY PLS_INTEGER;
+    list_burse vect_p;
+    TYPE vect_q IS TABLE OF bursa.id_bursa%TYPE INDEX BY PLS_INTEGER;
+    list_fin_burse vect_q;
+    no_burse exception;
+    before statement is
+    begin
+        select b.id_bursa, b.id_student, b.nume
+        bulk collect into list_burse
+        from bursa b;
+    end before statement;
+    
+    before each row is
+    begin
+        DBMS_OUTPUT.PUT_LINE('Vreau sa sterg ' || :val_veche.id_student);
+        n := 0;
+        m := 0;
+        for i in list_burse.first..list_burse.last loop
+            if :val_veche.id_student = list_burse(i).id_student then
+                if lower(list_burse(i).nume) like 'bursa merit%' then
+                    n := n + 1;
+                end if;
+                list_fin_burse(m) := list_burse(i).id_bursa;
+                m := m + 1;
+            end if;
+        end loop;
+        
+        if n > 1 then
+            DBMS_OUTPUT.PUT_LINE('Stergere esuata!');
+            RAISE_APPLICATION_ERROR(-20000,'Mai multe burse!');
+        end if;
+    end before each row;
+    
+    after statement is
+    begin
+        DBMS_OUTPUT.PUT_LINE('S-a sters studentul si cele ' || m || ' burse:');
+        for i in list_fin_burse.first..list_fin_burse.last loop
+            DBMS_OUTPUT.PUT(list_fin_burse(i) || ' ');
+        end loop;
+        DBMS_OUTPUT.PUT_LINE(' ');
+    end after statement;
+end;
+
+CREATE OR REPLACE TRIGGER boolFK
+BEFORE DROP ON DATABASE
+DECLARE
+    vin_tab VARCHAR2(100);
+    vin_cns VARCHAR2(100);
+    vin_stt VARCHAR2(100);
+BEGIN
+    FOR tab IN (SELECT table_name, constraint_name, status
+                FROM user_constraints
+                WHERE constraint_type = 'R') LOOP 
+        vin_tab := tab.table_name;
+        vin_cns := tab.constraint_name;
+        vin_stt := tab.status;
+        
+        IF vin_stt <> 'ENABLED' THEN
+            RAISE_APPLICATION_ERROR(-20000, 'Nu avem ' || vin_cns || ' pe ' || vin_tab);
+        END IF;
+    END LOOP;
+END;
+/
+
+create table parinte1
+(
+    v varchar2(30)
+    constraint Ppk
+    primary key
+);
+create table copil1
+(
+    vi varchar2(50)
+    constraint Cpk
+    primary key,
+    vii varchar2(30)
+);
+alter table copil1
+add CONSTRAINT Cfk
+FOREIGN KEY (vii)
+REFERENCES parinte1(v)
+ON DELETE SET NULL;
+
+alter table copil1
+enable constraint Cfk;
+drop table copil1;
+
+rollback;
+
+
+
+create or replace package studenti_pachet2 is
+    PROCEDURE findMostNActiveStudent
+        (v_nrcomp NUMBER DEFAULT 1);
+    PROCEDURE proc1
+        (v_in NUMBER DEFAULT 0);
+    FUNCTION erasmus_acreditat
+        (vin_cnp IN NUMBER,
+        vin_limba IN VARCHAR2)
+            RETURN NUMBER;
+    PROCEDURE studenti
+            (vin_n in number,
+            vin_data in number,
+            vin_moneda in varchar2,
+            vin_nume in varchar2);
+end studenti_pachet2;
+
+create or replace package body studenti_pachet2 is
+    PROCEDURE findMostNActiveStudent
+     (v_nrcomp NUMBER DEFAULT 1)
+    IS
+             /*Record*/
+             type student_info is record (
+             id_student STUDENT.id_student%TYPE,
+             nume_student STUDENT.nume%TYPE,
+             id_bursa BURSA.id_bursa%TYPE
+             );
+             /*Tablou imbricat*/
+             type tablou_imbricat is table of student_info;
+             v_list_students tablou_imbricat := tablou_imbricat();
+             v_old_student STUDENT.id_student%TYPE;
+             v_nume STUDENT.nume%TYPE;
+             /*Tablou indexat*/
+    type tablou_indexat is table of bursa.id_bursa%TYPE index by pls_integer;
+             v_list_burse tablou_indexat;
+             v_allburse number;
+             /*Vector*/
+             type vector is varray(150) of STUDENT.id_student%TYPE;
+             v_list_studentids vector := vector();
+             i number;
+             j number;
+             minim number;
+             contor number;
+             too_many_burse exception;
+             too_many_burse_cautate exception;
+         BEGIN
+             select count(*)
+             into v_allburse
+             from bursa;
+             
+             if(v_nrcomp > v_allburse) then
+                raise too_many_burse;
+             end if;
+             
+             select BAUX.ID_BURSA
+             bulk collect into v_list_burse
+             from BURSA BAUX
+             join (select B.id_bursa, count(*) as nr_burse_sociale
+                 from BURSA B
+                 join caz_social C2 on C2.id_bursa = B.id_bursa
+                 where lower(C2.nr_adeverinte) > 2
+                 GROUP BY B.id_bursa) D on D.id_bursa = BAUX.id_bursa
+             order by D.nr_burse_sociale desc, BAUX.suma;
+            
+             if(v_nrcomp > v_list_burse.COUNT) then
+                raise too_many_burse_cautate;
+             end if;
+             
+             select s2.id_student, s2.nume, b.id_bursa
+            
+             bulk collect into v_list_students
+             from bursa b
+             join student s2 on s2.id_student = b.id_student
+             order by s2.id_student;
+             
+             v_old_student := v_list_students(1).id_student;
+             contor := 0;
+             minim := v_list_students.count;
+             for i in v_list_students.first..v_list_students.last loop
+                 if(v_old_student <> v_list_students(i).id_student) then
+                     if(minim = contor and contor <> 0) then
+                         v_list_studentids.extend;
+                         v_list_studentids(v_list_studentids.last) := v_old_student;
+                     elsif(minim > contor and contor <> 0) then
+                         v_list_studentids.delete;
+                         v_list_studentids.extend;
+                         v_list_studentids(v_list_studentids.last) := v_old_student;
+                         minim := contor;
+                     end if;
+                     v_old_student := v_list_students(i).id_student;
+                     contor:= 0;
+                 end if;
+                 for j in 1..v_nrcomp loop
+                     if(v_list_students(i).id_bursa = v_list_burse(j)) then
+                        contor := contor + 1;
+                     end if;
+                 end loop;
+             end loop;
+             if(minim = contor and contor <> 0) then
+                 v_list_studentids.extend;
+                 v_list_studentids(v_list_studentids.last) := v_old_student;
+             elsif(minim > contor and contor <> 0) then
+                 v_list_studentids.delete;
+                 v_list_studentids.extend;
+                 v_list_studentids(v_list_studentids.last) := v_old_student;
+                 minim := contor;
+             end if;
+             
+             for i in v_list_studentids.first..v_list_studentids.last loop
+                 select nume
+                 into v_nume
+                 from student
+                 where id_student = v_list_studentids(i);
+                 if(v_nume is not null) then
+                     DBMS_OUTPUT.PUT_LINE('Student ' || v_nrcomp || '-activ: id = ' || v_list_studentids(i) || ' nume = '
+                    || v_nume);
+                 else
+                     DBMS_OUTPUT.PUT_LINE('Student ' || v_nrcomp || '-activ: id = ' || v_list_studentids(i) || ' fara
+                    nume');
+                 end if;
+             end loop;
+             
+         EXCEPTION
+             when too_many_burse then
+                RAISE_APPLICATION_ERROR(-20001,'Prea putine burse cerute');
+             when too_many_burse_cautate then
+                RAISE_APPLICATION_ERROR(-20002,'Prea multe acte cerute');
+             when TOO_MANY_ROWS then
+                RAISE_APPLICATION_ERROR(-20003,'Prea multe burse gasite cu acelasi id');
+            
+             WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20004,'Nu s-au gasit datele');
+             WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20000,'Alta eroare!');
+                
+    END findMostNActiveStudent;
+    
+    PROCEDURE proc1
+    (v_in NUMBER DEFAULT 0)
+IS
+            contor number;
+            flag number := 0;
+            cursor c is
+                select s.id_student, count(*) nr_burse
+                from STUDENT s
+                join bursa B2 on s.id_student = B2.id_student
+                group by s.id_student
+                having count(*) <= v_in;
+                
+            cursor u(v_idstudent STUDENT.id_student%type) is
+                select *
+                from bursa
+                where id_student = v_idstudent and id_student in (
+                    select id_student
+                    from studii_strainatate
+                    join ERASMUS E3 on E3.id_erasmus = studii_strainatate.id_erasmus
+                    where E3.durata >= 100
+                    )
+                for update of suma nowait ;
+                no_students exception;
+                
+    BEGIN
+        for student in c loop
+            flag := 1;
+            contor := 0;
+            for j in u(student.id_student) loop
+                if(lower(j.nume) like 'bursa merit%') then
+                    contor := contor + 1;
+                    
+                    update BURSA
+                    set suma = suma*1.2
+                    where current of u;
+                end if;
+            end loop;
+            
+            DBMS_OUTPUT.PUT('Studentul '|| student.id_student);
+            if(contor = 0) then
+                DBMS_OUTPUT.PUT_LINE(' nu si-a marit burse de merit');
+            else
+                DBMS_OUTPUT.PUT_LINE(' si-a marit '|| contor || ' burse');
+            end if;
+            
+            rollback; -------------------------------
+            
+        end loop;
+        if(flag = 0) then
+            raise no_students;
+        end if;
+        
+    EXCEPTION
+        when INVALID_CURSOR then
+            RAISE_APPLICATION_ERROR(-20001, 'Cursorul este inchis');
+        when CURSOR_ALREADY_OPEN then
+            RAISE_APPLICATION_ERROR(-20002, 'Cursor deja deschis');
+        WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20003,'Nu s-au gasit date');
+        WHEN no_students THEN
+            RAISE_APPLICATION_ERROR(-20004,'Nu sunt studenti cu acest nr minim de burse');
+        WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR(-20000,'Alta eroare!');
+            
+    END proc1;
+
+    FUNCTION erasmus_acreditat
+    (vin_cnp IN NUMBER,
+    vin_limba IN VARCHAR2)
+RETURN NUMBER
+IS
+        nr_err number;
+        ans number;
+        aux number;
+        my_no_data_found exception;
+        no_students_to_change exception;
+        vals_modif number := 0;
+        type tablou is table of student.id_student%TYPE;
+        v_list_students tablou := tablou();
+        
+    begin
+    
+        select count(*)
+        into aux
+        from STUDENT s
+        where s.cnp = vin_cnp;
+        if aux = 0 then
+            nr_err := 1;
+            raise my_no_data_found;
+        end if;
+        
+        select count(*)
+        into aux
+        from tari t
+        where lower(t.limba) = lower(vin_limba);
+        if aux = 0 then
+            nr_err := 2;
+            raise my_no_data_found;
+        end if;
+        ----select * from erasmus;
+        select count(*)
+        into aux
+        from ERASMUS e
+        join studii_strainatate s2 on e.id_erasmus = s2.id_erasmus
+        join tari t2 on t2.id_tara = s2.id_tara
+        where lower(t2.limba) = lower(vin_limba) and
+                e.data_inceput < sysdate;
+        if aux = 0 then
+            nr_err := 3;
+            raise my_no_data_found;
+        end if;
+        
+        select distinct st.id_student
+        bulk collect into v_list_students
+        from studii_strainatate
+        join STUDENT st on st.id_student = studii_strainatate.id_student
+        join tari t3 on t3.id_tara = studii_strainatate.id_tara
+        join erasmus e2 on studii_strainatate.id_erasmus = e2.id_erasmus
+        where st.cnp = vin_cnp and
+                lower(t3.limba) = lower(vin_limba) and
+                e2.data_inceput < sysdate;   
+        for i in v_list_students.first..v_list_students.last loop
+            DBMS_OUTPUT.PUT_LINE(v_list_students(i));
+            update student s
+            set s.tip_student = 'Erasmus Acreditat'
+            where (s.an_studiu < 3) and s.id_student = v_list_students(i);
+                vals_modif := vals_modif + SQL%ROWCOUNT;
+        end loop;
+        
+        if vals_modif = 0 then
+            raise no_students_to_change;
+        end if;
+        
+    return vals_modif;
+    
+    exception
+        WHEN my_no_data_found THEN
+            if nr_err = 1 then
+                DBMS_OUTPUT.PUT_LINE('Nu s-a gasit niciun student cu cnp-ul ' || vin_cnp);
+            elsif nr_err = 2 then
+                DBMS_OUTPUT.PUT_LINE('Nu s-a gasit niciun erasmus cu limba ' || vin_limba);
+            elsif nr_err = 3 then
+                DBMS_OUTPUT.PUT_LINE('Nu s-a gasit niciun erasmus cu limba ' || vin_limba || 'care sa fie inceput');
+            end if;
+            RETURN -20001;
+        WHEN no_students_to_change THEN
+            DBMS_OUTPUT.PUT_LINE('Niciun student nu e in erasmus acreditat');
+            RETURN -20002;
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Alta eroare');
+            DBMS_OUTPUT.PUT_LINE ('Codul erorii: ' || SQLCODE);
+            DBMS_OUTPUT.PUT_LINE ('Mesajul erorii: ' || SQLERRM);
+            RETURN -20000;
+    end erasmus_acreditat;
+    
+    PROCEDURE studenti
+    (vin_n in number, ----bursa minima
+    vin_data in number,----data minima pt erasmus
+    vin_moneda in VARCHAR2, ----moneda tarii
+    vin_nume in VARCHAR2) ---numele erasmusului
+IS
+---select * from erasmus;
+---select * from caz_social;
+        nr_err number;
+        ind number := 0;
+        id_std buget.id_student%TYPE;
+        type tablou is table of buget.id_student%TYPE;
+        v_list_students tablou := tablou();
+        type date_student is record(
+            id_stud2 student.id_student%TYPE,
+            nume_student student.nume%TYPE,
+            prenume_student student.prenume%TYPE
+        );
+        type tablou21 is table of date_student;
+        v_list_students_fin tablou21 := tablou21();
+        type tablou2 is table of date_student INDEX BY PLS_INTEGER;
+        v_list_students_aux tablou2;
+        type tablou3 is table of erasmus.data_inceput%TYPE INDEX BY PLS_INTEGER;
+        v_aux_erasmus_data tablou3;
+        type tablou4 is table of erasmus.nume%TYPE INDEX BY PLS_INTEGER;
+        v_aux_nume_erasmus tablou4;
+        
+
+        negative exception;
+        my_no_data_found exception;
+        no_students_incase exception;
+        no_erasmus_data exception;
+        too_many_erasmus exception;
+        
+    BEGIN
+        if vin_data < 0 then
+            raise negative;
+        end if;
+        
+
+        select data_inceput
+        bulk collect into v_aux_erasmus_data
+        from erasmus
+        where data_inceput >= (sysdate - vin_data);
+                
+        if sql%notfound then
+            nr_err := 1;
+            raise my_no_data_found;
+        end if;
+        
+        select nume
+        bulk collect into v_aux_nume_erasmus
+        from erasmus
+        where nume = vin_nume;
+        if sql%rowcount > 1 then
+            raise too_many_erasmus;
+        elsif sql%notfound then
+            nr_err := 3;
+            raise my_no_data_found;
+        end if;
+        
+        
+        select bg.id_student
+        bulk collect into v_list_students
+        from buget bg
+        join (
+            select b.id_student, MAX(suma) suma_max
+            from bursa b
+            group by b.id_student
+        ) aux on bg.id_student = aux.id_student
+        where  aux.suma_max >= vin_n;
+        
+        if v_list_students.count = 0 then
+            nr_err := 2;
+            raise my_no_data_found;
+        end if;
+        
+        for i in v_list_students.first..v_list_students.last loop
+            id_std := v_list_students(i);
+            
+            select
+                st.id_student,
+                st.nume,
+                st.prenume
+            bulk collect into v_list_students_aux
+            from student st
+            where st.id_student = id_std and st.id_student in(
+                select distinct
+                    R.id_student
+                from studii_strainatate R
+                join erasmus E2 on R.id_erasmus = E2.id_erasmus
+                join tari t1 on R.id_tara = t1.id_tara
+                where E2.data_inceput >= (sysdate - vin_data) and
+                    lower(t1.moneda) = lower(vin_moneda) and
+                    lower(E2.nume) = lower(vin_nume)
+                );
+            if SQL%ROWCOUNT = 1 then
+                v_list_students_fin.extend();
+                v_list_students_fin(v_list_students_fin.last) := v_list_students_aux(v_list_students_aux.first);
+            end if;
+        end loop;
+        
+        if v_list_students_fin.count = 0 then
+            raise no_students_incase;
+        end if;
+        
+        for i in v_list_students_fin.first..v_list_students_fin.last loop
+            ind := ind + 1;
+            DBMS_OUTPUT.PUT_LINE('Student ' || ind || ') id: ' || v_list_students_fin(i).id_stud2 || 'nume: '
+            || v_list_students_fin(i).nume_student || ' ' || v_list_students_fin(i).prenume_student);
+        end loop;
+        
+    EXCEPTION
+        WHEN my_no_data_found THEN
+            if nr_err = 1 then
+                DBMS_OUTPUT.PUT_LINE('Nu exista erasmus dupa data ' || vin_data);
+            elsif nr_err = 2 then
+                DBMS_OUTPUT.PUT_LINE('Nu sunt studenti la buget care au o bursa mai mare de ' || vin_n);
+            elsif nr_err = 3 then
+                DBMS_OUTPUT.PUT_LINE('Nu exista erasmus cu numele ' || vin_nume);
+            end if;
+        RAISE_APPLICATION_ERROR(-20001, 'Nu s-au gasit date');
+        WHEN no_students_incase THEN
+            DBMS_OUTPUT.PUT_LINE('Nu exista niciun student la buget care sa respecte toate conditiile');
+            RAISE_APPLICATION_ERROR(-20002, 'Nu exista niciun student la buget care sa respecte toate
+            conditiile');
+        WHEN too_many_erasmus THEN
+            DBMS_OUTPUT.PUT_LINE('Exista mai multe erasmus cu acest nume');
+            RAISE_APPLICATION_ERROR(-20003, 'Exista mai multe erasmus cu acest nume');
+        WHEN negative THEN
+            DBMS_OUTPUT.PUT_LINE('Numarul de ani trebuie sa fie pozitiv');
+            RAISE_APPLICATION_ERROR(-20004, 'Numarul de ani trebuie sa fie pozitiv');
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('Alta eroare');
+            DBMS_OUTPUT.PUT_LINE ('Codul erorii: ' || SQLCODE);
+            DBMS_OUTPUT.PUT_LINE ('Mesajul erorii: ' || SQLERRM);
+            RAISE_APPLICATION_ERROR(-20000, 'Alta eroare!');
+    END studenti;
+    
+end studenti_pachet2;
+/ 
+declare
+    v_x number := &p;
+begin
+    studenti_pachet2.findMostNActiveStudent(2);
+    
+    studenti_pachet2.proc1(v_x);
+    
+    DBMS_OUTPUT.PUT_LINE('Result ' || studenti_pachet2.erasmus_acreditat(1234567891123456, 'Engleza'));
+    
+    studenti_pachet2.studenti(800, 2, 'EUR', 'Hai la lac!');
+    
+    rollback;
+
+end;
+
+
+
+create or replace package toerasmus is
+  PROCEDURE init;
+  PROCEDURE add_erasmus
+    (v_id_erasmus IN studii_strainatate.id_erasmus%TYPE,
+     v_id_student IN studii_strainatate.id_student%TYPE);
+  FUNCTION adaugare_valida
+    (v_id_student IN studii_strainatate.id_student%TYPE,
+     v_id_bursa_max OUT bursa.id_bursa%TYPE)
+    RETURN BOOLEAN;
+    FUNCTION verif_medie
+    (vv_id_student IN student.id_student%TYPE)
+    RETURN BOOLEAN;
+
+end toerasmus;
+/
+
+create or replace package body toerasmus is
+  initializare boolean := false;
+  type bursa_data is record(
+    id_student bursa.id_bursa%TYPE,
+    id_bursa bursa.id_student%TYPE,
+    nr_burse number
+  );
+  type tablou1 is table of bursa_data;
+  type tablou11 is table of tablou1;
+  v_init_students tablou11 := tablou11();
+
+  PROCEDURE init IS
+    v_burse tablou1 := tablou1();
+    id_std number;
+  BEGIN
+    for j in (select id_student from student) loop
+      id_std := j.id_student;
+      select id_student, id_bursa, MAX(suma) max_brs
+        bulk collect into v_burse
+        from bursa
+        group by id_student, id_bursa
+        having id_student = id_std
+        order by max_brs desc, id_bursa;
+        v_init_students.extend();
+        v_init_students(v_init_students.last) := v_burse;
+    end loop;
+
+    initializare := true;
+  END init;
+    FUNCTION verif_medie
+    (vv_id_student IN student.id_student%TYPE)
+    RETURN BOOLEAN is
+    v_medie number;
+    begin
+    select medie_admitere
+    into v_medie
+    from buget
+    where id_student = vv_id_student;
+    
+    if v_medie > 9.5 then
+        return true;
+    return false;
+    end if;
+    end verif_medie;
+ 
+  PROCEDURE add_erasmus
+    (v_id_erasmus IN studii_strainatate.id_erasmus%TYPE,
+     v_id_student IN studii_strainatate.id_student%TYPE) IS
+    nr_err number;
+    aux_student_id student.id_student%TYPE;
+    aux_erasmus_id erasmus.id_erasmus%TYPE;
+    type tablou2 is table of studii_strainatate.id_relatie_ss%TYPE;
+    v_echs tablou2 := tablou2();
+    last_id number;
+    id_bursa_max bursa.id_bursa%TYPE;
+    erasmus_existent exception;
+    venit_insuficient exception;
+    fara_initializare exception;
+    burse_insuficiente exception;
+  BEGIN
+    initializare := false;
+    init();
+    if not initializare then
+      raise fara_initializare;
+    end if;
+    nr_err := 1;
+    select id_student
+      into aux_student_id
+      from student
+      where id_student = v_id_student;
+    nr_err := 2;
+    select id_erasmus
+      into aux_erasmus_id
+      from erasmus
+      where id_erasmus = v_id_erasmus;
+    select id_relatie_ss
+      bulk collect into v_echs
+      from studii_strainatate
+      where ID_erasmus = v_id_erasmus and id_student = v_id_student;
+    if SQL%ROWCOUNT >= 1 THEN
+      raise erasmus_existent;
+    end if;
+    if not adaugare_valida(v_id_student, id_bursa_max) then
+      raise burse_insuficiente;
+    end if;
+    select nvl(max(id_relatie_ss), 0)
+      into last_id
+      from studii_strainatate r;
+      ---DBMS_OUTPUT.PUT_LINE(v_id_student);
+      ---DBMS_OUTPUT.PUT_LINE(v_id_erasmus);
+    ---insert into studii_strainatate values (1105, 1083, 1044 , 1052);
+      insert into studii_strainatate values (last_id + 1, v_id_student, 1044 , v_id_erasmus);
+      if verif_medie(v_id_student) then
+        insert into bursa values(last_id + 1, 'Bursa Erasmus', (select suma from bursa where id_bursa = id_bursa_max), v_id_student);
+    end if;
+      ---baga_insert(v_id_erasmus, v_id_student);
+    DBMS_OUTPUT.PUT_LINE('Student adaugat la erasmus');
+    DBMS_OUTPUT.PUT_LINE('Cea mai mare bursa este ' || id_bursa_max);
+    ---afisare_detalii_bursa(id_bursa_max);
+    rollback;
+
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+      if nr_err = 1 then
+        DBMS_OUTPUT.PUT_LINE('Nu exista student cu id = ' || v_id_student);
+      elsif nr_err = 2 then
+        DBMS_OUTPUT.PUT_LINE('Nu exista erasmus cu id = ' || v_id_erasmus);
+      end if;
+      RAISE_APPLICATION_ERROR(-20001, 'Nu s-au gasit date');
+    WHEN erasmus_existent THEN
+      DBMS_OUTPUT.PUT_LINE('Studentul ' || v_id_student || ' are deja erasmusul ' ||
+                           v_id_erasmus);
+      RAISE_APPLICATION_ERROR(-20002, 'Studentul are acest erasmus!');
+    WHEN fara_initializare THEN
+      DBMS_OUTPUT.PUT_LINE('A aparut o eroare la initializare');
+      RAISE_APPLICATION_ERROR(-20003, 'Eroare la initializare!');
+    WHEN burse_insuficiente THEN
+      DBMS_OUTPUT.PUT_LINE('Studentul nu are mai mult de o bursa');
+      RAISE_APPLICATION_ERROR(-20004, 'Burse insuficiente!');
+  END add_erasmus;
+
+    
+
+  FUNCTION adaugare_valida
+    (v_id_student IN studii_strainatate.id_student%TYPE,
+     v_id_bursa_max OUT bursa.id_bursa%TYPE)
+    RETURN BOOLEAN IS
+    v_nr_burse number;
+    flag boolean := true;
+    poz number;
+    no_burse exception;
+  BEGIN
+    for i in v_init_students.first..v_init_students.last loop
+      if v_init_students(i)(v_init_students(i).first).id_student = v_id_student then
+        v_nr_burse := v_init_students(i).count;
+        flag := false;
+        poz := i;
+        exit;
+      end if;
+    end loop;
+    if flag then
+      return false;
+    end if;
+    if v_nr_burse < 2 then
+      return false;
+    end if;
+    v_id_bursa_max := v_init_students(poz)(v_init_students(poz).FIRST).id_bursa;
+    return true;
+
+  EXCEPTION
+    WHEN no_burse THEN
+      DBMS_OUTPUT.PUT_LINE('Studentul ' || v_id_student || ' nu are nicio bursa.');
+      return false;
+  END adaugare_valida;
+
+
+
+end toerasmus;
+/
+
+rollback;
+begin
+  toerasmus.add_erasmus(1051, 1083);
+  ---toerasmus.add_erasmus(1051, 1085);
+  ---toerasmus.add_erasmus(1, 1083);
+  ---toerasmus.add_erasmus(1050, 1083);
+end;
+/
